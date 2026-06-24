@@ -1,0 +1,290 @@
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+html,body{font-size:18px}
+.wrap{padding:16px;font-size:18px}
+.hdr{background:#26215C;border-radius:12px;padding:20px;margin-bottom:20px}
+.hdr-title{color:#CECBF6;font-size:22px;font-weight:500;margin-bottom:6px}
+.hdr-sub{color:#AFA9EC;font-size:17px;line-height:1.5}
+.progress-wrap{background:#3C3489;border-radius:999px;height:6px;margin:.9rem 0 .25rem}
+.progress-fill{height:6px;border-radius:999px;background:#AFA9EC;transition:width .3s}
+.progress-label{font-size:13px;color:#AFA9EC;text-align:right}
+.step{display:none}
+.step.active{display:block}
+.q-num{font-size:15px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:8px;letter-spacing:.04em}
+.q-text{font-size:21px;font-weight:500;color:var(--color-text-primary);line-height:1.5;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;align-items:center;gap:14px;padding:16px 18px;border:1px solid #ccc;border-radius:12px;cursor:pointer;background:#fff;transition:border-color .12s,background .12s}
+.opt:hover{background:#f5f5f5}
+.opt.selected{border-color:#534AB7;background:#EEEDFE}
+.opt.selected .opt-letter{background:#534AB7;color:#EEEDFE}
+.opt-letter{min-width:30px;height:30px;border-radius:50%;background:#f0f0f0;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;color:#666;flex-shrink:0;transition:background .12s,color .12s}
+.opt-text{font-size:18px;color:#1a1a1a;line-height:1.4}
+.nav{display:flex;gap:10px;margin-top:20px;align-items:center}
+.nav-btn{padding:14px 24px;border:1px solid #ccc;border-radius:12px;background:#fff;color:#555;font-size:18px;font-weight:500;cursor:pointer}
+.nav-btn:hover{background:#f5f5f5}
+.nav-btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.nav-btn.primary:hover{background:#3C3489}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.nav-spacer{flex:1}
+.dot-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.dot{width:11px;height:11px;border-radius:50%;background:#ccc;transition:background .2s}
+.dot.done{background:#AFA9EC}
+.dot.current{background:#534AB7}
+.result{display:none;padding-top:4px}
+.result.show{display:block}
+.result-card{border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid transparent}
+.result-title{font-size:22px;font-weight:500;margin-bottom:8px}
+.result-sub{font-size:18px;line-height:1.6;margin-bottom:14px}
+.result-traits{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.trait{font-size:16px;font-weight:500;padding:6px 14px;border-radius:999px}
+.result-tip{font-size:17px;line-height:1.6;padding:12px 16px;border-radius:10px}
+.scores-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.score-card{background:#f5f5f5;border-radius:10px;padding:12px;text-align:center}
+.score-val{font-size:24px;font-weight:500;color:#1a1a1a}
+.score-lbl{font-size:14px;color:#888;margin-top:3px}
+.reset-btn{width:100%;padding:14px;border:1px solid #ccc;border-radius:12px;background:#fff;color:#555;font-size:18px;cursor:pointer;font-weight:500;margin-top:14px}
+.reset-btn:hover{background:#f5f5f5}
+</style>
+
+<h2 class="sr-only">Интерактивный чек-лист из 8 вопросов для определения финансового астрологического типа по стихии</h2>
+
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-title">Какой я финансовый тип?</div>
+    <div class="hdr-sub">8 вопросов — узнаешь свою стихию и финансовый профиль</div>
+    <div class="progress-wrap"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+    <div class="progress-label"><span id="pcnt">0</span> из 8</div>
+  </div>
+
+  <div id="quiz"></div>
+  <div class="dot-row" id="dots"></div>
+
+  <div class="result" id="result">
+    <div class="scores-row" id="scores-row"></div>
+    <div id="result-card"></div>
+    <button class="reset-btn" onclick="resetQuiz()"><i class="ti ti-refresh" aria-hidden="true"></i> Пройти заново</button>
+  </div>
+</div>
+
+<script>
+const QS = [
+  {
+    q:"Ты получил(а) неожиданные деньги. Что делаешь в первую очередь?",
+    opts:[
+      {t:"Сразу вкладываю в новую идею или авантюру", el:"F"},
+      {t:"Откладываю на счёт — пусть работает", el:"E"},
+      {t:"Расскажу друзьям, обсужу, куда потратить", el:"A"},
+      {t:"Почувствую облегчение — наконец-то подушка безопасности", el:"W"},
+    ]
+  },
+  {
+    q:"Как ты принимаешь финансовые решения?",
+    opts:[
+      {t:"Быстро, по интуиции — промедление стоит возможностей", el:"F"},
+      {t:"Долго взвешиваю, собираю данные", el:"E"},
+      {t:"Советуюсь с несколькими людьми, сравниваю варианты", el:"A"},
+      {t:"Прислушиваюсь к ощущениям — тело само подскажет", el:"W"},
+    ]
+  },
+  {
+    q:"Что тебя мотивирует зарабатывать больше?",
+    opts:[
+      {t:"Свобода, независимость, новые вершины", el:"F"},
+      {t:"Безопасность, стабильность, уверенность в завтра", el:"E"},
+      {t:"Возможности, путешествия, интересные проекты", el:"A"},
+      {t:"Забота о близких, творческое самовыражение", el:"W"},
+    ]
+  },
+  {
+    q:"Как ты обычно тратишь деньги?",
+    opts:[
+      {t:"Импульсивно — вижу классное, покупаю", el:"F"},
+      {t:"Планомерно — список, бюджет, ничего лишнего", el:"E"},
+      {t:"На впечатления и общение — кафе, концерты, поездки", el:"A"},
+      {t:"На уют, красоту, то что приносит внутренний покой", el:"W"},
+    ]
+  },
+  {
+    q:"Что ты думаешь про долги и кредиты?",
+    opts:[
+      {t:"Инструмент роста — главное правильно использовать", el:"F"},
+      {t:"Стараюсь избегать — лучше накоплю сам(а)", el:"E"},
+      {t:"Нормально, если есть чёткий план погашения", el:"A"},
+      {t:"Очень тревожусь из-за долгов — давят эмоционально", el:"W"},
+    ]
+  },
+  {
+    q:"Как ты относишься к нестабильному доходу (фриланс, бизнес)?",
+    opts:[
+      {t:"Обожаю — скучно получать одно и то же каждый месяц", el:"F"},
+      {t:"Тяжело — мне нужна предсказуемость", el:"E"},
+      {t:"Нормально, если много разных источников", el:"A"},
+      {t:"Пугает — нестабильность отнимает много сил", el:"W"},
+    ]
+  },
+  {
+    q:"Деньги для тебя — это прежде всего…",
+    opts:[
+      {t:"Энергия и свобода действий", el:"F"},
+      {t:"Ресурс и материальная основа жизни", el:"E"},
+      {t:"Возможности и связи с людьми", el:"A"},
+      {t:"Безопасность и эмоциональный покой", el:"W"},
+    ]
+  },
+  {
+    q:"Что лучше всего описывает твою финансовую слабость?",
+    opts:[
+      {t:"Трачу больше, чем планировал(а), — живу ярко", el:"F"},
+      {t:"Слишком осторожничаю и упускаю хорошие возможности", el:"E"},
+      {t:"Много трачу на социальное — подарки, встречи, людей", el:"A"},
+      {t:"Трачу от стресса или тревоги — шопинг как терапия", el:"W"},
+    ]
+  },
+];
+
+const TYPES = {
+  F:{
+    name:"Огонь — поджигатель возможностей",
+    signs:"Овен, Лев, Стрелец",
+    bg:"#FAECE7", border:"#F0997B", title:"#712B13", sub:"#993C1D",
+    traitBg:"#F5C4B3", traitFg:"#712B13",
+    tipBg:"#FEF6F3", tipFg:"#993C1D",
+    traits:["Быстрые решения","Высокий риск","Большие доходы","Быстрые траты"],
+    desc:"Ты зарабатываешь на энергии и смелости. Деньги приходят через запуски, риск и действие. Твоя сила — не бояться начать. Слабость — деньги уходят так же быстро, как приходят.",
+    tip:"Совет: автоматически откладывай 10% сразу при поступлении — пока азарт не потратил всё.",
+  },
+  E:{
+    name:"Земля — строитель капитала",
+    signs:"Телец, Дева, Козерог",
+    bg:"#FAEEDA", border:"#EF9F27", title:"#633806", sub:"#854F0B",
+    traitBg:"#FAC775", traitFg:"#633806",
+    tipBg:"#FDFAF3", tipFg:"#854F0B",
+    traits:["Стабильность","Накопление","Долгосрочный план","Осторожность"],
+    desc:"Ты строишь надёжно и методично. Деньги у тебя водятся, потому что ты их бережёшь. Твоя сила — дисциплина и терпение. Слабость — страх нового может заблокировать рост дохода.",
+    tip:"Совет: раз в квартал проверяй, не застрял(а) ли в зоне комфорта — возможно, пора открыть новый источник дохода.",
+  },
+  A:{
+    name:"Воздух — торговец связями",
+    signs:"Близнецы, Весы, Водолей",
+    bg:"#EEEDFE", border:"#AFA9EC", title:"#3C3489", sub:"#534AB7",
+    traitBg:"#CECBF6", traitFg:"#3C3489",
+    tipBg:"#F8F7FF", tipFg:"#534AB7",
+    traits:["Нетворкинг","Идеи и проекты","Переговоры","Непостоянство"],
+    desc:"Ты зарабатываешь через общение, идеи и связи. Деньги приходят легко — и незаметно исчезают на социальное. Твоя сила — убеждать и договариваться. Слабость — деньги абстрактны, трудно их «чувствовать».",
+    tip:"Совет: веди таблицу расходов — тебе важно сделать деньги видимыми, иначе они исчезают в «мелочах на людей».",
+  },
+  W:{
+    name:"Вода — интуитивный хранитель",
+    signs:"Рак, Скорпион, Рыбы",
+    bg:"#E1F5EE", border:"#5DCAA5", title:"#085041", sub:"#0F6E56",
+    traitBg:"#9FE1CB", traitFg:"#085041",
+    tipBg:"#F2FCF8", tipFg:"#0F6E56",
+    traits:["Интуиция","Эмоциональные траты","Забота о близких","Накопление из страха"],
+    desc:"Ты зарабатываешь через творчество, помощь людям и глубокую экспертизу. Деньги несут для тебя эмоциональный заряд — могут и тревожить, и радовать сильнее, чем для других. Твоя сила — интуиция в деньгах работает. Слабость — тратишь от стресса или бережёшь из страха.",
+    tip:"Совет: отдели «эмоциональный бюджет» (трать осознанно на радость) от финансовой подушки — так тревога снизится.",
+  },
+};
+
+let cur=0, answers=[], scores={F:0,E:0,A:0,W:0};
+
+function render(){
+  const quiz=document.getElementById('quiz');
+  quiz.innerHTML='';
+  const q=QS[cur];
+  const div=document.createElement('div');
+  div.className='step active';
+  div.innerHTML=`
+    <div class="q-num">Вопрос ${cur+1} из 8</div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts" id="opts-wrap">
+      ${q.opts.map((o,i)=>`
+        <div class="opt${answers[cur]===i?' selected':''}" onclick="pick(${i})" role="button" tabindex="0">
+          <div class="opt-letter">${['А','Б','В','Г'][i]}</div>
+          <div class="opt-text">${o.t}</div>
+        </div>`).join('')}
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="prev()" ${cur===0?'disabled':''}>Назад</button>
+      <span class="nav-spacer"></span>
+      <button class="nav-btn primary" id="next-btn" onclick="next()" ${answers[cur]===undefined?'disabled':''}>
+        ${cur===7?'Узнать тип':'Далее'}
+      </button>
+    </div>`;
+  quiz.appendChild(div);
+  updateProgress();
+}
+
+function pick(i){
+  answers[cur]=i;
+  document.querySelectorAll('.opt').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
+  document.getElementById('next-btn').disabled=false;
+}
+
+function next(){
+  if(answers[cur]===undefined)return;
+  cur++;
+  if(cur>=8){showResult();return;}
+  render();
+}
+
+function prev(){
+  if(cur>0){cur--;render();}
+}
+
+function updateProgress(){
+  const done=answers.filter(a=>a!==undefined).length;
+  document.getElementById('pfill').style.width=(done/8*100)+'%';
+  document.getElementById('pcnt').textContent=done;
+  let dots='';
+  for(let i=0;i<8;i++){
+    const cls=i<cur?'done':i===cur?'current':'';
+    dots+=`<div class="dot ${cls}"></div>`;
+  }
+  document.getElementById('dots').innerHTML=dots;
+}
+
+function showResult(){
+  document.getElementById('quiz').innerHTML='';
+  document.getElementById('dots').innerHTML='';
+  scores={F:0,E:0,A:0,W:0};
+  QS.forEach((q,i)=>{
+    if(answers[i]!==undefined) scores[q.opts[answers[i]].el]++;
+  });
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const T=TYPES[top];
+  const labels={F:'Огонь',E:'Земля',A:'Воздух',W:'Вода'};
+
+  const scoresHtml=Object.entries(scores).map(([k,v])=>`
+    <div class="score-card">
+      <div class="score-val">${v}</div>
+      <div class="score-lbl">${labels[k]}</div>
+    </div>`).join('');
+  document.getElementById('scores-row').innerHTML=scoresHtml;
+
+  const traitsHtml=T.traits.map(t=>`<span class="trait" style="background:${T.traitBg};color:${T.traitFg}">${t}</span>`).join('');
+  document.getElementById('result-card').innerHTML=`
+    <div class="result-card" style="background:${T.bg};border-color:${T.border}">
+      <div class="result-title" style="color:${T.title}">${T.name}</div>
+      <div style="font-size:12px;color:${T.sub};margin-bottom:8px">${T.signs}</div>
+      <div class="result-traits">${traitsHtml}</div>
+      <div class="result-sub" style="color:${T.sub}">${T.desc}</div>
+      <div class="result-tip" style="background:${T.tipBg};color:${T.tipFg}">${T.tip}</div>
+    </div>`;
+
+  document.getElementById('result').className='result show';
+  updateProgress();
+}
+
+function resetQuiz(){
+  cur=0;answers=[];scores={F:0,E:0,A:0,W:0};
+  document.getElementById('result').className='result';
+  document.getElementById('scores-row').innerHTML='';
+  document.getElementById('result-card').innerHTML='';
+  render();
+}
+
+render();
+</script>
