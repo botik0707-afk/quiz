@@ -1,0 +1,264 @@
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-size:18px}
+.w{padding:16px;font-size:18px}
+.hdr{background:#26215C;border-radius:12px;padding:20px;margin-bottom:20px}
+.hdr-t{color:#CECBF6;font-size:22px;font-weight:500;margin-bottom:4px}
+.hdr-s{color:#AFA9EC;font-size:17px;line-height:1.5}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:10px 18px;border:1px solid #ccc;border-radius:12px;font-size:17px;font-weight:500;cursor:pointer;color:#555;background:#fff;transition:all .12s}
+.tab:hover{background:#f5f5f5}
+.tab.on{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
+.panel{display:none}
+.panel.on{display:block}
+.intro{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:12px;padding:16px;margin-bottom:16px;font-size:17px;color:#3C3489;line-height:1.6}
+.sign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.sign-card{border:1px solid #ddd;border-radius:12px;padding:14px;background:#fff;cursor:pointer;transition:all .12s}
+.sign-card:hover{border-color:#aaa;background:#f5f5f5}
+.sign-card.on{border-color:#534AB7;background:#EEEDFE}
+.sc-name{font-size:17px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.sc-el{font-size:14px;font-weight:500;border-radius:999px;padding:3px 10px;display:inline-block}
+.detail{display:none;border:1px solid #ddd;border-radius:12px;padding:16px;margin-bottom:16px;background:#fff}
+.detail.on{display:block}
+.d-title{font-size:19px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.d-sub{font-size:15px;margin-bottom:12px}
+.d-desc{font-size:17px;color:#444;line-height:1.6;margin-bottom:12px}
+.d-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.d-box{background:#f5f5f5;border-radius:10px;padding:12px}
+.d-lbl{font-size:14px;color:#888;margin-bottom:4px}
+.d-val{font-size:16px;color:#1a1a1a;line-height:1.5}
+.d-tip{font-size:16px;border-radius:10px;padding:12px;line-height:1.5}
+.plist{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.pcard{border:1px solid #ddd;border-radius:12px;overflow:hidden;background:#fff}
+.phead{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer}
+.phead:hover{background:#f5f5f5}
+.psym{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pname{font-size:18px;font-weight:500;color:#1a1a1a;flex:1}
+.pkey{font-size:15px;color:#666}
+.pchev{font-size:18px;color:#aaa;transition:transform .2s}
+.pchev.on{transform:rotate(180deg)}
+.pbody{display:none;padding:0 18px 16px;border-top:1px solid #ddd}
+.pbody.on{display:block}
+.pdesc{font-size:17px;color:#444;line-height:1.6;margin:10px 0}
+.ptip{font-size:16px;border-radius:10px;padding:12px;line-height:1.5}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid #eee}
+.step:last-child{border-bottom:none}
+.snum{min-width:32px;height:32px;border-radius:50%;background:#EEEDFE;color:#3C3489;font-size:16px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.stitle{font-size:18px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.sdesc{font-size:17px;color:#444;line-height:1.6}
+.ex{border-radius:12px;padding:16px;margin-top:14px}
+.ex-t{font-size:17px;font-weight:500;margin-bottom:6px}
+.ex-d{font-size:16px;line-height:1.6}
+.info-card{background:#FAEEDA;border:1px solid #EF9F27;border-radius:12px;padding:14px 18px;margin-top:12px;font-size:16px;color:#633806;line-height:1.6}
+</style>
+
+<h2 class="sr-only">Интерактивная инструкция по чтению 2-го дома натальной карты: три раздела — знак на куспиде, планеты внутри, хозяин дома</h2>
+
+<div class="w">
+<div class="hdr">
+  <div class="hdr-t">Как читать 2-й дом</div>
+  <div class="hdr-s">Три слоя анализа: знак → планеты → хозяин</div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="sw('sign')"><i class="ti ti-circle-letter-z" style="font-size:14px;margin-right:4px" aria-hidden="true"></i>Знак на куспиде</div>
+  <div class="tab" onclick="sw('planets')"><i class="ti ti-planet" style="font-size:14px;margin-right:4px" aria-hidden="true"></i>Планеты внутри</div>
+  <div class="tab" onclick="sw('lord')"><i class="ti ti-key" style="font-size:14px;margin-right:4px" aria-hidden="true"></i>Хозяин дома</div>
+</div>
+
+<div class="panel on" id="t-sign">
+  <div class="intro">Знак на куспиде 2-го дома — это <strong>стиль</strong>, в котором ты зарабатываешь и обращаешься с деньгами. Нажми на свой знак — увидишь расшифровку.</div>
+  <div class="sign-grid" id="sgrid"></div>
+  <div class="detail" id="sdetail"></div>
+</div>
+
+<div class="panel" id="t-planets">
+  <div class="intro">Планеты во 2-м доме — <strong>активные силы</strong>, которые влияют на деньги напрямую. Пустой 2-й дом — нормально: тогда всё внимание на хозяине дома.</div>
+  <div class="plist" id="plist"></div>
+  <div class="info-card"><i class="ti ti-bulb" style="font-size:13px;margin-right:4px" aria-hidden="true"></i>Несколько планет во 2-м доме — читай каждую отдельно, потом смотри на сочетание. Например, Юпитер + Сатурн: большой потенциал роста, но требует дисциплины.</div>
+</div>
+
+<div class="panel" id="t-lord">
+  <div class="intro">Хозяин 2-го дома — планета, управляющая знаком на куспиде. Она показывает, <strong>где и как</strong> реализуется финансовый потенциал — в зависимости от дома, где стоит.</div>
+  <div class="steps" id="steps"></div>
+  <div class="ex" style="background:#E1F5EE;border:0.5px solid #5DCAA5;margin-top:12px">
+    <div class="ex-t" style="color:#085041"><i class="ti ti-book" style="font-size:13px;margin-right:4px" aria-hidden="true"></i>Пример разбора</div>
+    <div class="ex-d" style="color:#0F6E56">Куспид 2-го дома — Рак → хозяин Луна. Луна стоит в 10-м доме (карьера). Значит: деньги приходят через публичную деятельность и профессиональное признание. Финансовое благополучие связано со статусом.</div>
+  </div>
+</div>
+</div>
+
+<script>
+const SIGNS=[
+  {n:"Овен",el:"Огонь",ec:"#FAECE7",ef:"#712B13",eb:"#F5C4B3",
+   desc:"Зарабатывает быстро, через действие и инициативу. Деньги приходят в моменте — и уходят так же.",
+   plus:"Смелость, высокий темп, первопроходец",minus:"Импульсивные траты, нетерпеливость",
+   tip:"Автоматическое накопление сразу при поступлении — иначе деньги уйдут на следующий порыв."},
+  {n:"Телец",el:"Земля",ec:"#FAEEDA",ef:"#633806",eb:"#FAC775",
+   desc:"Накапливает медленно и надёжно. Природный финансовый инстинкт, ценит материальный комфорт.",
+   plus:"Терпение, стабильность, умеет копить",minus:"Слишком осторожен, упускает рост",
+   tip:"Раз в год спрашивай себя: не застрял(а) ли? Телец умеет копить — важно ещё и преумножать."},
+  {n:"Близнецы",el:"Воздух",ec:"#EEEDFE",ef:"#3C3489",eb:"#CECBF6",
+   desc:"Множество источников дохода, деньги через коммуникацию, обучение и идеи.",
+   plus:"Гибкость, переговоры, продажи",minus:"Непостоянство, деньги абстрактны",
+   tip:"Веди таблицу всех источников дохода — Близнецам нужно видеть деньги, иначе они исчезают."},
+  {n:"Рак",el:"Вода",ec:"#E1F5EE",ef:"#085041",eb:"#9FE1CB",
+   desc:"Зарабатывает через заботу о других. Сильная эмоциональная связь с деньгами.",
+   plus:"Интуиция, умение создавать доверие",minus:"Тратит от эмоций, копит из страха",
+   tip:"Разделяй «эмоциональный бюджет» и финансовую подушку — это снизит тревогу."},
+  {n:"Лев",el:"Огонь",ec:"#FAECE7",ef:"#712B13",eb:"#F5C4B3",
+   desc:"Зарабатывает через творчество, статус и признание. Деньги любят приходить к тем, кто светится.",
+   plus:"Щедрость, умение продавать себя",minus:"Тратит на имидж больше нужного",
+   tip:"Инвестиции в себя — ок, но задай чёткий лимит на «представительские» расходы."},
+  {n:"Дева",el:"Земля",ec:"#FAEEDA",ef:"#633806",eb:"#FAC775",
+   desc:"Зарабатывает через мастерство, сервис и аналитику. Очень внимательна к деталям бюджета.",
+   plus:"Дисциплина, финансовая грамотность",minus:"Боится просить больше, чем стоит",
+   tip:"Твои услуги стоят дороже, чем ты думаешь. Раз в год пересматривай прайс вверх."},
+  {n:"Весы",el:"Воздух",ec:"#EEEDFE",ef:"#3C3489",eb:"#CECBF6",
+   desc:"Зарабатывает через партнёрство, красоту и посредничество. Деньги приходят в паре.",
+   plus:"Дипломатия, умение договариваться",minus:"Откладывает решения, зависит от партнёра",
+   tip:"Раздели личные финансы с партнёрскими — так проще принимать решения самостоятельно."},
+  {n:"Скорпион",el:"Вода",ec:"#E1F5EE",ef:"#085041",eb:"#9FE1CB",
+   desc:"Умеет работать с чужими ресурсами, инвестициями, кризисами. Глубокое чутьё на деньги.",
+   plus:"Трансформация, выход из кризисов",minus:"Тайны вокруг денег, контроль через них",
+   tip:"Прозрачность в финансах с близкими снизит напряжение — деньги не должны быть инструментом власти."},
+  {n:"Стрелец",el:"Огонь",ec:"#FAECE7",ef:"#712B13",eb:"#F5C4B3",
+   desc:"Деньги приходят через знания, путешествия и расширение горизонтов.",
+   plus:"Оптимизм, удача, широкий кругозор",minus:"Тратит на будущее, забывая про настоящее",
+   tip:"Строй планы на 1–3 года — Стрелец мыслит масштабно, но важны конкретные шаги."},
+  {n:"Козерог",el:"Земля",ec:"#FAEEDA",ef:"#633806",eb:"#FAC775",
+   desc:"Строит капитал через карьеру, статус и долгосрочные вложения. Самый терпеливый финансист.",
+   plus:"Амбиции, стратегическое мышление",minus:"Жертвует удовольствием ради накопления",
+   tip:"Позволь себе тратить на качество жизни сейчас — деньги есть не только чтобы копить."},
+  {n:"Водолей",el:"Воздух",ec:"#EEEDFE",ef:"#3C3489",eb:"#CECBF6",
+   desc:"Нестандартные источники дохода — технологии, сообщества, инновации.",
+   plus:"Инновации, нетворкинг, монетизация идей",minus:"Непредсказуемый доход, игнорирует рутину",
+   tip:"Создай финансовую систему на автопилоте — Водолею скучно считать, но автоматизация решает это."},
+  {n:"Рыбы",el:"Вода",ec:"#E1F5EE",ef:"#085041",eb:"#9FE1CB",
+   desc:"Зарабатывает через творчество, интуицию и помощь людям. Деньги приходят нелинейно.",
+   plus:"Интуиция в деньгах, творческий потенциал",minus:"Размытые границы, трудно называть цену",
+   tip:"Научись называть цену вслух — Рыбам это даётся тяжело, но именно это меняет доход."},
+];
+
+const PLANETS=[
+  {sym:"☉",n:"Солнце",key:"Самовыражение = доход",bg:"#FAEEDA",sfg:"#854F0B",sbg:"#FDFAF3",
+   desc:"Деньги приходят через реализацию личности. Ты зарабатываешь лучше всего, когда работа совпадает с твоей идентичностью — буквально «быть собой» приносит доход.",
+   tip:"В какой деятельности ты чувствуешь себя на 100% собой? Именно там твой главный источник дохода."},
+  {sym:"☽",n:"Луна",key:"Интуиция и эмоции в деньгах",bg:"#EEEDFE",sfg:"#534AB7",sbg:"#F8F7FF",
+   desc:"Сильная финансовая интуиция, но доход колеблется вместе с настроением. Эмоциональные покупки — слабость. Зато умеешь чувствовать рынок и потребности людей.",
+   tip:"Не принимай крупных финансовых решений в плохом настроении — Луна делает деньги эмоциональными."},
+  {sym:"☿",n:"Меркурий",key:"Деньги через слова и идеи",bg:"#E1F5EE",sfg:"#0F6E56",sbg:"#F2FCF8",
+   desc:"Зарабатываешь через коммуникацию, письмо, переговоры, обучение. Деньги приходят быстро — и уходят быстро. Несколько источников одновременно — норма.",
+   tip:"Монетизируй знания: курсы, консультации, тексты. Меркурий во 2-м доме — это буквально «слова в деньги»."},
+  {sym:"♀",n:"Венера",key:"Комфорт, красота, лёгкий доход",bg:"#FBEAF0",sfg:"#72243E",sbg:"#FEF5F8",
+   desc:"Самое благоприятное положение для 2-го дома. Деньги приходят легко — через красоту, искусство, отношения. Умеешь тратить с удовольствием и без чувства вины.",
+   tip:"Не бойся инвестировать в красоту своей жизни — для тебя это не расточительство, а часть финансовой энергии."},
+  {sym:"♂",n:"Марс",key:"Активный заработок, борьба за ресурс",bg:"#FAECE7",sfg:"#993C1D",sbg:"#FEF6F3",
+   desc:"Деньги достаются через усилие, конкуренцию и активные действия. Высокий потенциал заработка — но и импульсивные траты. Конфликты вокруг финансов возможны.",
+   tip:"Направь энергию Марса в предпринимательство или продажи — пассивный доход даётся тяжелее."},
+  {sym:"♃",n:"Юпитер",key:"Изобилие и финансовая удача",bg:"#FAEEDA",sfg:"#854F0B",sbg:"#FDFAF3",
+   desc:"Одно из лучших положений для финансов. Способность привлекать деньги, удачные инвестиции, расширение дохода. Риск — переоценить возможности.",
+   tip:"С Юпитером во 2-м доме важно не переборщить с долгами — оптимизм иногда превышает реальность."},
+  {sym:"♄",n:"Сатурн",key:"Дисциплина и медленный рост",bg:"#F1EFE8",sfg:"#444441",sbg:"#F8F7F4",
+   desc:"Деньги приходят через труд, терпение и дисциплину. В молодости финансово тяжелее, к зрелости — стабильнее. Страх нищеты может быть иррациональным.",
+   tip:"После 35–40 лет финансовая ситуация, как правило, значительно улучшается. Доверяй своей дисциплине."},
+  {sym:"♅",n:"Уран",key:"Непредсказуемый доход",bg:"#EEEDFE",sfg:"#534AB7",sbg:"#F8F7FF",
+   desc:"Деньги приходят неожиданно — технологии, инновации, фриланс. Доход нестабилен, но может быть очень высоким. Классическая работа — не для тебя.",
+   tip:"Создай финансовую подушку на 3–6 месяцев — Уран делает доход непредсказуемым, подушка даст свободу."},
+  {sym:"♆",n:"Нептун",key:"Интуиция, творчество, иллюзии",bg:"#E1F5EE",sfg:"#0F6E56",sbg:"#F2FCF8",
+   desc:"Деньги через творчество и духовность. Риск: финансовые иллюзии, обманы, нечёткие договорённости.",
+   tip:"Всегда оформляй договорённости письменно. Нептун — интуиция работает, но документы важнее."},
+  {sym:"♇",n:"Плутон",key:"Трансформация и власть через деньги",bg:"#FAECE7",sfg:"#993C1D",sbg:"#FEF6F3",
+   desc:"Мощный финансовый потенциал через трансформацию — кризисы, чужие ресурсы, инвестиции. Деньги могут стать инструментом власти.",
+   tip:"Изучи инвестиции и управление активами — Плутон даёт природный талант к финансовой трансформации."},
+];
+
+const STEPS=[
+  {n:"1",t:"Найди знак на куспиде 2-го дома",d:"Открой натальную карту и посмотри, какой знак стоит у начала 2-го дома (цифра 2 на колесе)."},
+  {n:"2",t:"Определи планету-хозяина этого знака",d:"Овен → Марс. Телец и Весы → Венера. Близнецы и Дева → Меркурий. Рак → Луна. Лев → Солнце. Стрелец и Рыбы → Юпитер. Козерог → Сатурн. Водолей → Уран. Скорпион → Плутон."},
+  {n:"3",t:"Найди, в каком доме стоит эта планета",d:"Посмотри, в каком секторе колеса расположена твоя планета-хозяин. Этот дом — сфера жизни, через которую к тебе приходят деньги."},
+  {n:"4",t:"Читай: дом хозяина = источник дохода",d:"1-й → через личность. 3-й → через коммуникацию. 5-й → через творчество. 6-й → через работу и сервис. 7-й → через партнёрство. 10-й → через карьеру. 11-й → через сообщество и проекты."},
+  {n:"5",t:"Добавь знак хозяина — это стиль",d:"Знак, в котором стоит хозяин, добавляет оттенок. Например, хозяин в Стрельце в 6-м доме: деньги через работу, но в сфере образования или путешествий."},
+];
+
+let selSign=null;
+
+function renderSigns(){
+  const g=document.getElementById('sgrid');
+  SIGNS.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='sign-card';
+    d.innerHTML=`<div class="sc-name">${s.n}</div><span class="sc-el" style="background:${s.eb};color:${s.ef}">${s.el}</span>`;
+    d.onclick=()=>selectSign(i);
+    g.appendChild(d);
+  });
+}
+
+function selectSign(i){
+  selSign=i;
+  document.querySelectorAll('.sign-card').forEach((c,j)=>c.classList.toggle('on',j===i));
+  const s=SIGNS[i];
+  const det=document.getElementById('sdetail');
+  det.className='detail on';
+  det.innerHTML=`
+    <div class="d-title" style="color:${s.ef}">${s.n} на куспиде 2-го дома</div>
+    <div class="d-sub"><span class="sc-el" style="background:${s.eb};color:${s.ef}">${s.el}</span></div>
+    <div class="d-desc">${s.desc}</div>
+    <div class="d-row">
+      <div class="d-box"><div class="d-lbl">Сила</div><div class="d-val" style="color:#3B6D11">${s.plus}</div></div>
+      <div class="d-box"><div class="d-lbl">Слабость</div><div class="d-val" style="color:#993C1D">${s.minus}</div></div>
+    </div>
+    <div class="d-tip" style="background:${s.ec};color:${s.ef}"><strong>Совет:</strong> ${s.tip}</div>`;
+}
+
+function renderPlanets(){
+  const l=document.getElementById('plist');
+  PLANETS.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='pcard';
+    d.innerHTML=`
+      <div class="phead" onclick="toggleP(${i})">
+        <div class="psym" style="background:${p.bg};color:${p.sfg}">${p.sym}</div>
+        <div style="flex:1"><div class="pname">${p.n}</div><div class="pkey">${p.key}</div></div>
+        <i class="ti ti-chevron-down pchev" id="pc${i}" aria-hidden="true"></i>
+      </div>
+      <div class="pbody" id="pb${i}">
+        <div class="pdesc">${p.desc}</div>
+        <div class="ptip" style="background:${p.sbg};color:${p.sfg}">${p.tip}</div>
+      </div>`;
+    l.appendChild(d);
+  });
+}
+
+function toggleP(i){
+  const b=document.getElementById('pb'+i),c=document.getElementById('pc'+i);
+  const o=b.classList.toggle('on');
+  c.classList.toggle('on',o);
+}
+
+function renderSteps(){
+  const l=document.getElementById('steps');
+  STEPS.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='step';
+    d.innerHTML=`<div class="snum">${s.n}</div><div><div class="stitle">${s.t}</div><div class="sdesc">${s.d}</div></div>`;
+    l.appendChild(d);
+  });
+}
+
+function sw(id){
+  ['sign','planets','lord'].forEach(k=>{
+    document.getElementById('t-'+k).classList.toggle('on',k===id);
+  });
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('on',['sign','planets','lord'][i]===id);
+  });
+}
+
+renderSigns();
+renderPlanets();
+renderSteps();
+</script>
